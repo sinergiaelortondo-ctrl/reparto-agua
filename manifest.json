@@ -1,7 +1,9 @@
-"name": "Reparto de Agua - Gestor Completo",
+  {
+  "name": "Reparto de Agua - Gestor Completo",
   "short_name": "Reparto Agua",
   "description": "Sistema completo de gestión de reparto de agua envasada",
-  "start_url": "/reparto-agua/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
@@ -22,3 +24,4 @@
   ],
   "categories": ["business", "productivity"],
   "lang": "es"
+}
