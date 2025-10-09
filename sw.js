@@ -1,20 +1,19 @@
 const CACHE_NAME = 'reparto-agua-v1';
-const urlsToCache = [
-  '/reparto-agua/',
-  '/reparto-agua/index.html',
-  '/reparto-agua/manifest.json'
-];
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
-  );
+  console.log('Service Worker instalado');
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', event => {
+  console.log('Service Worker activado');
+  event.waitUntil(clients.claim());
 });
 
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => response || fetch(event.request))
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
   );
 });
