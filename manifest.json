@@ -1,0 +1,24 @@
+"name": "Reparto de Agua - Gestor Completo",
+  "short_name": "Reparto Agua",
+  "description": "Sistema completo de gestión de reparto de agua envasada",
+  "start_url": "/reparto-agua/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><circle cx='100' cy='100' r='90' fill='%232563eb'/><text x='100' y='140' font-size='120' text-anchor='middle' fill='white'>💧</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><circle cx='256' cy='256' r='240' fill='%232563eb'/><text x='256' y='380' font-size='320' text-anchor='middle' fill='white'>💧</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "es"
