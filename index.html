@@ -9,22 +9,33 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Reparto Agua">
     <title>Reparto de Agua - Gestor</title>
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💧</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        #root { min-height: 100vh; }
+        * { -webkit-tap-highlight-color: transparent; }
+    </style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="text/babel" src="app.js"></script>
+    <div id="root">
+        <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-size: 24px;">
+            Cargando... 💧
+        </div>
+    </div>
+    <script type="text/babel" src="./app.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('Service Worker registrado'))
-                .catch(err => console.log('Error:', err));
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => console.log('✅ Service Worker registrado'))
+                    .catch(err => console.log('❌ Error SW:', err));
+            });
         }
     </script>
 </body>
