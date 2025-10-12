@@ -1,371 +1,48 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#2563eb">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Reparto Agua">
-    <title>Reparto de Agua - Gestor Completo</title>
-    
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    
+    <title>Prueba</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: Arial, sans-serif;
         }
-        #root { min-height: 100vh; }
-        * { -webkit-tap-highlight-color: transparent; }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 {
+            color: #667eea;
+            font-size: 48px;
+            margin: 0;
+        }
+        p {
+            color: #666;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        .emoji {
+            font-size: 80px;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
-    <div id="root"></div>
-    
-    <script type="text/babel">
-        const { useState, useEffect } = React;
-        
-        const Icon = ({ name, className = "w-5 h-5" }) => {
-          const icons = {
-            droplet: <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2C8 10 4 14 4 18c0 4.4 3.6 8 8 8s8-3.6 8-8c0-4-4-8-8-16z" /></svg>,
-            package: <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>,
-            plus: <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>,
-            trash: <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
-            download: <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>,
-            upload: <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>,
-            save: <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>,
-            x: <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>,
-            check: <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>,
-            alert: <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>,
-          };
-          return icons[name] || null;
-        };
-
-        function App() {
-          const [activeTab, setActiveTab] = useState('clientes');
-          const [clientes, setClientes] = useState([]);
-          const [stock, setStock] = useState({ llenos12: 0, vacios12: 0, llenos20: 0, vacios20: 0 });
-          const [precios, setPrecios] = useState({ 
-            precioBidon12: 0, precioBidon20: 0, costoEnvase12: 0, costoEnvase20: 0,
-            costoLlenado12: 0, costoLlenado20: 0, costoTapa: 0, costoDispenser: 0
-          });
-          const [finanzas, setFinanzas] = useState({ ingresos: [], gastosCombustible: [], gastosEnvases: [], gastosDispensers: [] });
-          const [cobros, setCobros] = useState([]);
-          const [nuevoGasto, setNuevoGasto] = useState({ tipo: 'combustible', monto: 0, descripcion: '', cantidad: 1 });
-          const [nuevoCliente, setNuevoCliente] = useState({
-            nombre: '', direccion: '', telefono: '', dia: 'Lunes', 
-            bidones12EnCasa: 0, bidones20EnCasa: 0, vacios12EnCliente: 0, vacios20EnCliente: 0
-          });
-          const [mostrarModalEntrega, setMostrarModalEntrega] = useState(false);
-          const [mostrarModalRetiro, setMostrarModalRetiro] = useState(false);
-          const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
-          const [entregaTemp, setEntregaTemp] = useState({ cantidad12: 0, cantidad20: 0, pagado: false });
-          const [retiroTemp, setRetiroTemp] = useState({ vacios12: 0, vacios20: 0 });
-
-          const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-
-          useEffect(() => {
-            const datosGuardados = localStorage.getItem('waterDeliveryData');
-            if (datosGuardados) {
-              try {
-                const datos = JSON.parse(datosGuardados);
-                setClientes(datos.clientes || []);
-                setStock(datos.stock || { llenos12: 0, vacios12: 0, llenos20: 0, vacios20: 0 });
-                setPrecios(datos.precios || { precioBidon12: 0, precioBidon20: 0, costoEnvase12: 0, costoEnvase20: 0, costoLlenado12: 0, costoLlenado20: 0, costoTapa: 0, costoDispenser: 0 });
-                setFinanzas(datos.finanzas || { ingresos: [], gastosCombustible: [], gastosEnvases: [], gastosDispensers: [] });
-                setCobros(datos.cobros || []);
-              } catch (error) {
-                console.error('Error:', error);
-              }
-            }
-          }, []);
-
-          useEffect(() => {
-            const datos = { clientes, stock, precios, finanzas, cobros, fechaGuardado: new Date().toISOString() };
-            localStorage.setItem('waterDeliveryData', JSON.stringify(datos));
-          }, [clientes, stock, precios, finanzas, cobros]);
-
-          const exportarDatos = () => {
-            const datos = { clientes, stock, precios, finanzas, cobros, fechaExportacion: new Date().toISOString(), version: '1.0' };
-            const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `agua_datos_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
-            link.click();
-            alert('✅ Datos exportados');
-          };
-
-          const importarDatos = (event) => {
-            const archivo = event.target.files[0];
-            if (!archivo) return;
-            const lector = new FileReader();
-            lector.onload = (e) => {
-              try {
-                const datosImportados = JSON.parse(e.target.result);
-                if (datosImportados.clientes && datosImportados.stock) {
-                  if (window.confirm('⚠️ Esto reemplazará todos tus datos. ¿Continuar?')) {
-                    setClientes(datosImportados.clientes || []);
-                    setStock(datosImportados.stock || {});
-                    setPrecios(datosImportados.precios || {});
-                    setFinanzas(datosImportados.finanzas || {});
-                    setCobros(datosImportados.cobros || []);
-                    alert('✅ Datos importados');
-                  }
-                } else {
-                  alert('❌ Archivo no válido');
-                }
-              } catch (error) {
-                alert('❌ Error al leer archivo');
-              }
-            };
-            lector.readAsText(archivo);
-            event.target.value = '';
-          };
-
-          const agregarCliente = () => {
-            if (nuevoCliente.nombre && nuevoCliente.direccion) {
-              setClientes([...clientes, { ...nuevoCliente, id: Date.now(), historial: [] }]);
-              setNuevoCliente({ nombre: '', direccion: '', telefono: '', dia: 'Lunes', bidones12EnCasa: 0, bidones20EnCasa: 0, vacios12EnCliente: 0, vacios20EnCliente: 0 });
-            }
-          };
-
-          const eliminarCliente = (id) => {
-            if (window.confirm('¿Eliminar cliente?')) {
-              setClientes(clientes.filter(c => c.id !== id));
-              setCobros(cobros.filter(c => c.clienteId !== id));
-            }
-          };
-
-          const abrirModalEntrega = (cliente) => {
-            setClienteSeleccionado(cliente);
-            setEntregaTemp({ cantidad12: 0, cantidad20: 0, pagado: false });
-            setMostrarModalEntrega(true);
-          };
-
-          const abrirModalRetiro = (cliente) => {
-            setClienteSeleccionado(cliente);
-            setRetiroTemp({ vacios12: 0, vacios20: 0 });
-            setMostrarModalRetiro(true);
-          };
-
-          const registrarEntrega = (clienteId, cantidad12, cantidad20, pagado) => {
-            if (cantidad12 === 0 && cantidad20 === 0) {
-              alert('Debes entregar al menos un bidón');
-              return;
-            }
-            if (stock.llenos12 < cantidad12 || stock.llenos20 < cantidad20) {
-              alert('Stock insuficiente');
-              return;
-            }
-
-            const cliente = clientes.find(c => c.id === clienteId);
-            if (!cliente) return;
-
-            const monto = (cantidad12 * precios.precioBidon12) + (cantidad20 * precios.precioBidon20);
-            const costoProduccion = (cantidad12 * (precios.costoLlenado12 + precios.costoTapa)) + (cantidad20 * (precios.costoLlenado20 + precios.costoTapa));
-
-            setClientes(clientes.map(c => {
-              if (c.id === clienteId) {
-                return {
-                  ...c,
-                  bidones12EnCasa: cantidad12,
-                  bidones20EnCasa: cantidad20,
-                  vacios12EnCliente: (c.vacios12EnCliente || 0) + (c.bidones12EnCasa || 0),
-                  vacios20EnCliente: (c.vacios20EnCliente || 0) + (c.bidones20EnCasa || 0),
-                };
-              }
-              return c;
-            }));
-
-            setStock(s => ({
-              llenos12: s.llenos12 - cantidad12,
-              vacios12: s.vacios12 + (cliente.bidones12EnCasa || 0),
-              llenos20: s.llenos20 - cantidad20,
-              vacios20: s.vacios20 + (cliente.bidones20EnCasa || 0)
-            }));
-
-            if (costoProduccion > 0) {
-              setFinanzas(prev => ({
-                ...prev,
-                gastosEnvases: [...prev.gastosEnvases, {
-                  fecha: new Date().toISOString(),
-                  monto: costoProduccion,
-                  descripcion: `Producción - ${cliente.nombre}`,
-                  tipo: 'Producción'
-                }]
-              }));
-            }
-
-            if (pagado) {
-              setFinanzas(prev => ({
-                ...prev,
-                ingresos: [...prev.ingresos, {
-                  fecha: new Date().toISOString(),
-                  cliente: cliente.nombre,
-                  cantidad12, cantidad20, monto
-                }]
-              }));
-            } else {
-              setCobros(prev => [...prev, {
-                id: Date.now(),
-                clienteId, clienteNombre: cliente.nombre,
-                fecha: new Date().toISOString(),
-                cantidad12, cantidad20, monto, pagado: false
-              }]);
-            }
-
-            alert(`✅ Entrega registrada\n${cliente.nombre}\n12L: ${cantidad12} | 20L: ${cantidad20}\nTotal: $${monto.toFixed(2)}`);
-          };
-
-          const confirmarEntrega = () => {
-            if (!clienteSeleccionado) return;
-            registrarEntrega(clienteSeleccionado.id, entregaTemp.cantidad12, entregaTemp.cantidad20, entregaTemp.pagado);
-            setMostrarModalEntrega(false);
-          };
-
-          const confirmarRetiro = () => {
-            if (!clienteSeleccionado) return;
-            const cliente = clientes.find(c => c.id === clienteSeleccionado.id);
-            if (!cliente) return;
-
-            if (retiroTemp.vacios12 > (cliente.vacios12EnCliente || 0) || retiroTemp.vacios20 > (cliente.vacios20EnCliente || 0)) {
-              alert('No hay suficientes vacíos');
-              return;
-            }
-            if (retiroTemp.vacios12 === 0 && retiroTemp.vacios20 === 0) {
-              alert('Debes retirar al menos un vacío');
-              return;
-            }
-
-            setClientes(clientes.map(c => {
-              if (c.id === clienteSeleccionado.id) {
-                return {
-                  ...c,
-                  vacios12EnCliente: (c.vacios12EnCliente || 0) - retiroTemp.vacios12,
-                  vacios20EnCliente: (c.vacios20EnCliente || 0) - retiroTemp.vacios20
-                };
-              }
-              return c;
-            }));
-
-            setStock(s => ({
-              ...s,
-              vacios12: s.vacios12 + retiroTemp.vacios12,
-              vacios20: s.vacios20 + retiroTemp.vacios20
-            }));
-
-            alert(`✅ Retiro registrado\nVacíos 12L: ${retiroTemp.vacios12}\nVacíos 20L: ${retiroTemp.vacios20}`);
-            setMostrarModalRetiro(false);
-          };
-
-          const marcarComoPagado = (cobroId) => {
-            const cobro = cobros.find(c => c.id === cobroId);
-            if (cobro) {
-              setFinanzas(prev => ({
-                ...prev,
-                ingresos: [...prev.ingresos, {
-                  fecha: new Date().toISOString(),
-                  cliente: cobro.clienteNombre,
-                  cantidad12: cobro.cantidad12,
-                  cantidad20: cobro.cantidad20,
-                  monto: cobro.monto
-                }]
-              }));
-              setCobros(cobros.map(c => c.id === cobroId ? { ...c, pagado: true } : c));
-            }
-          };
-
-          const agregarGasto = () => {
-            if (nuevoGasto.monto <= 0) {
-              alert('El monto debe ser mayor a 0');
-              return;
-            }
-
-            const gasto = {
-              fecha: new Date().toISOString(),
-              monto: parseFloat(nuevoGasto.monto),
-              descripcion: nuevoGasto.descripcion
-            };
-
-            setFinanzas(prev => {
-              const nuevasFinanzas = { ...prev };
-              
-              switch(nuevoGasto.tipo) {
-                case 'combustible':
-                  nuevasFinanzas.gastosCombustible = [...prev.gastosCombustible, gasto];
-                  break;
-                case 'envases12':
-                  nuevasFinanzas.gastosEnvases = [...prev.gastosEnvases, { ...gasto, cantidad: parseInt(nuevoGasto.cantidad) || 1, tipo: '12 litros' }];
-                  setStock(s => ({ ...s, vacios12: s.vacios12 + (parseInt(nuevoGasto.cantidad) || 1) }));
-                  break;
-                case 'envases20':
-                  nuevasFinanzas.gastosEnvases = [...prev.gastosEnvases, { ...gasto, cantidad: parseInt(nuevoGasto.cantidad) || 1, tipo: '20 litros' }];
-                  setStock(s => ({ ...s, vacios20: s.vacios20 + (parseInt(nuevoGasto.cantidad) || 1) }));
-                  break;
-                case 'tapas':
-                  nuevasFinanzas.gastosEnvases = [...prev.gastosEnvases, { ...gasto, cantidad: parseInt(nuevoGasto.cantidad) || 1, tipo: 'Tapas' }];
-                  break;
-                case 'dispensers':
-                  nuevasFinanzas.gastosDispensers = [...prev.gastosDispensers, { ...gasto, cantidad: parseInt(nuevoGasto.cantidad) || 1 }];
-                  break;
-              }
-              
-              return nuevasFinanzas;
-            });
-
-            setNuevoGasto({ tipo: 'combustible', monto: 0, descripcion: '', cantidad: 1 });
-          };
-
-          const calcularTotales = () => {
-            const totalIngresos = finanzas.ingresos.reduce((sum, i) => sum + i.monto, 0);
-            const totalCombustible = finanzas.gastosCombustible.reduce((sum, g) => sum + g.monto, 0);
-            const totalEnvases = finanzas.gastosEnvases.reduce((sum, g) => sum + g.monto, 0);
-            const totalDispensers = finanzas.gastosDispensers.reduce((sum, g) => sum + g.monto, 0);
-            const totalGastos = totalCombustible + totalEnvases + totalDispensers;
-            const ganancia = totalIngresos - totalGastos;
-            const cobrosPendientes = cobros.filter(c => !c.pagado).reduce((sum, c) => sum + c.monto, 0);
-            const totalBidones12Vendidos = finanzas.ingresos.reduce((sum, i) => sum + (i.cantidad12 || 0), 0);
-            const totalBidones20Vendidos = finanzas.ingresos.reduce((sum, i) => sum + (i.cantidad20 || 0), 0);
-
-            return { totalIngresos, totalCombustible, totalEnvases, totalDispensers, totalGastos, ganancia, cobrosPendientes, totalBidones12Vendidos, totalBidones20Vendidos };
-          };
-
-          const clientesPorDia = (dia) => clientes.filter(c => c.dia === dia);
-          const totales = calcularTotales();
-
-          return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-100 p-4">
-              <div className="max-w-7xl mx-auto">
-                <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                  <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-6 text-white">
-                    <div className="flex justify-between items-center flex-wrap gap-3">
-                      <h1 className="text-3xl font-bold flex items-center gap-3">
-                        <Icon name="droplet" className="w-10 h-10" />
-                        Gestor de Reparto de Agua
-                      </h1>
-                      <div className="flex gap-3 flex-wrap">
-                        <label className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2 cursor-pointer font-medium">
-                          <Icon name="upload" />
-                          Importar
-                          <input type="number" placeholder="Bidones 12L" value={nuevoCliente.bidones12EnCasa} onChange={(e) => setNuevoCliente({...nuevoCliente, bidones12EnCasa: parseInt(e.target.value) || 0})} className="px-3 py-2 border rounded-lg" />
-                          <input type="number" placeholder="Bidones 20L" value={nuevoCliente.bidones20EnCasa} onChange={(e) => setNuevoCliente({...nuevoCliente, bidones20EnCasa: parseInt(e.target.value) || 0})} className="px-3 py-2 border rounded-lg" />
-                          <button onClick={agregarCliente} className="md:col-span-3 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2">
-                            <Icon name="plus" />Agregar Cliente
-                          </button>
-                        </div>
-                        <h2 className="text-xl font-bold mb-4">Lista de Clientes ({clientes.length})</h2>
-                        <div className="space-y-3">
-                          {clientes.map(c => (
-                            <div key={c.id} className="bg-white border rounded-lg p-4 shadow-sm">
-                              <div className="flex justify-between items-start flex-wrap gap-3">
-                                <div className="flex-1">
-                                  <h3 className="font-bold text-lg">{c.nombre}</h3>
-                                  <p className="text-sm text-gray-600">{c.direccion} - {c.telefono}</p>
-                                  <div className="mt-2 flex gap-2 flex-wrap">
-                                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">{c.dia}</span>
-                                 
+    <div class="container">
+        <div class="emoji">✅</div>
+        <h1>¡Funciona!</h1>
+        <p>Si ves esto, GitHub Pages está configurado correctamente</p>
+        <p style="font-size: 16px; margin-top: 30px;">Ahora puedes subir la aplicación completa</p>
+    </div>
+</body>
+</html>
